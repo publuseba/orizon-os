@@ -18,3 +18,8 @@ cd orizon-os
 # Make the script executable and run it
 chmod +x install-kde.sh
 sudo ./install-kde.sh
+```
+Some screenshots?
+[Orizon1](https://i.imgur.com/RhJuOb1.jpeg)
+[Orizon2](https://i.imgur.com/jiQdnDA.png)
+[Orizon3](https://i.imgur.com/Gkm9qi1.png)
