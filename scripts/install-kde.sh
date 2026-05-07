@@ -1,9 +1,5 @@
 #!/bin/bash
-# ============================================================
-#  ORIZON Linux - Main Installer
-#  Usage: sudo bash scripts/install-kde.sh
-#  Base: Ubuntu 22.04 / 24.04 LTS
-# ============================================================
+
 
 RED='\033[0;31m'; GREEN='\033[0;32m'; CYAN='\033[0;36m'
 YELLOW='\033[1;33m'; NC='\033[0m'; BOLD='\033[1m'
@@ -864,5 +860,7 @@ echo -e "${GREEN}${BOLD}╚═════════════════�
 echo ""
 echo -e "  ${CYAN}Reboot the system:${NC} ${BOLD}sudo reboot${NC}"
 echo -e "  ${CYAN}After first login check the Start button icon.${NC}"
+echo -e "  ${CYAN}If everything looks good — remove autostart manually:${NC}"
+echo -e "  ${BOLD}rm ~/.config/autostart/orizon-first-run.desktop${NC}"
 echo -e "  ${CYAN}Documentation, new OS version, support and Telegram channel: https://taplink.cc/orizon${NC}"
 echo -e ""
