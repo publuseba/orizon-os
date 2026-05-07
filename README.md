@@ -17,7 +17,7 @@ To transform your standard Ubuntu installation into Orizon-OS, open your termina
 
 ```bash
 # Clone the repository
-git clone [https://github.com/publuseba/orizon-os.git](https://github.com/publuseba/orizon-os.git)
+git clone https://github.com/publuseba/orizon-os.git
 
 # Enter the directory
 cd orizon-os
