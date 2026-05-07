@@ -1,9 +1,4 @@
 #!/bin/bash
-# ============================================================
-#  ORIZON Linux - Главный установщик
-#  Запуск: sudo bash scripts/install-kde.sh
-#  База: Ubuntu 22.04 / 24.04 LTS
-# ============================================================
 
 RED='\033[0;31m'; GREEN='\033[0;32m'; CYAN='\033[0;36m'
 YELLOW='\033[1;33m'; NC='\033[0m'; BOLD='\033[1m'
@@ -12,14 +7,14 @@ ORIZON_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 INSTALL_USER="${SUDO_USER:-$USER}"
 USER_HOME=$(eval echo "~$INSTALL_USER")
 
-# Пути к ресурсам (всегда относительные — работает у любого пользователя)
+# Resource paths (always relative — works for any user)
 ORIZON_LOGO="$ORIZON_DIR/branding/orizon-logo.png"
 ORIZON_SETTINGS_ICON="$ORIZON_DIR/branding/orizon-settings.png"
 ORIZON_EXPLORER_ICON="$ORIZON_DIR/branding/orizon-nautilus-dolphin.png"
 ORIZON_LINK="https://taplink.cc/orizon"
 WALLPAPER_PATH="/usr/share/backgrounds/orizon/orizon-default.png"
 
-# Иконки приложений (из папки branding/)
+# Application icons (from branding/ folder)
 ORIZON_ICON_BLUETOOTH="$ORIZON_DIR/branding/orizon-bluetooth.png"
 ORIZON_ICON_CALCULATOR="$ORIZON_DIR/branding/orizon-calculator.png"
 ORIZON_ICON_CALENDAR="$ORIZON_DIR/branding/orizon-calendar.png"
@@ -47,7 +42,7 @@ ORIZON_ICON_OKULAR="$ORIZON_DIR/branding/orizon-okular.png"
 ORIZON_ICON_SCREENSHOT="$ORIZON_DIR/branding/orizon-screenshot.png"
 ORIZON_ICON_LO_STARTCENTER="$ORIZON_DIR/branding/orizon-lo.png"
 
-[[ $EUID -ne 0 ]] && { echo -e "${RED}Запусти: sudo bash $0${NC}"; exit 1; }
+[[ $EUID -ne 0 ]] && { echo -e "${RED}Run as: sudo bash $0${NC}"; exit 1; }
 
 print_banner() {
 cat << 'BANNER'
@@ -67,30 +62,30 @@ log_ok()   { echo -e "${GREEN}  ✓ $1${NC}"; }
 log_warn() { echo -e "${YELLOW}  ⚠ $1${NC}"; }
 
 clear; print_banner
-echo -e "\n  Пользователь: ${CYAN}${BOLD}$INSTALL_USER${NC}"
-echo -e "  Папка ORIZON: ${CYAN}$ORIZON_DIR${NC}\n"
+echo -e "\n  User: ${CYAN}${BOLD}$INSTALL_USER${NC}"
+echo -e "  ORIZON folder: ${CYAN}$ORIZON_DIR${NC}\n"
 
 export DEBIAN_FRONTEND=noninteractive
 
-# ── 1. Удалить casper ─────────────────────────────────────────
-log_warn "Не забудь выключить VPN - загрузка может просто застрять на подключении к серверам UBUNTU."
-log_step "Удаление casper (причина ошибок при загрузке)..."
+# ── 1. Remove casper ──────────────────────────────────────────
+log_warn "Remember to disable VPN — the download may just hang while connecting to UBUNTU servers."
+log_step "Removing casper (cause of boot errors)..."
 systemctl stop casper-md5check.service 2>/dev/null || true
 systemctl disable casper-md5check.service 2>/dev/null || true
 systemctl mask casper-md5check.service 2>/dev/null || true
 apt-get remove --purge casper -y -qq 2>/dev/null || true
-log_ok "casper удалён"
+log_ok "casper removed"
 
-# ── 2. Исправить PAM ──────────────────────────────────────────
-log_step "Исправление PAM..."
+# ── 2. Fix PAM ────────────────────────────────────────────────
+log_step "Fixing PAM..."
 apt-get install --reinstall libpam-modules libpam-runtime -y -qq 2>/dev/null || true
 for f in /etc/pam.d/login /etc/pam.d/lightdm /etc/pam.d/common-session; do
     [ -f "$f" ] && sed -i 's/^\([^#].*pam_lastlog\.so.*\)$/#\1/' "$f" 2>/dev/null || true
 done
-log_ok "PAM исправлен"
+log_ok "PAM fixed"
 
-# ── 3. Установить KDE Plasma ──────────────────────────────────
-log_step "Установка KDE Plasma..."
+# ── 3. Install KDE Plasma ─────────────────────────────────────
+log_step "Installing KDE Plasma..."
 sudo apt update
 sudo apt install aptitude
 sudo aptitude install -y kde-plasma-desktop
@@ -102,11 +97,11 @@ sudo aptitude install -y okular
 sudo aptitude install -y spectacle
 sudo apt install -y sddm
 sudo systemctl enable sddm
-log_ok "KDE Plasma установлен"
+log_ok "KDE Plasma installed"
 
-# ── 4. Настроить SDDM (С АВТОЛОГИНОМ) ─────────────────────────
-log_step "Настройка SDDM и Автологина..."
-# Отключить другие DM
+# ── 4. Configure SDDM (WITH AUTOLOGIN) ───────────────────────
+log_step "Configuring SDDM and Autologin..."
+# Disable other DMs
 for dm in gdm3 gdm lightdm; do
     systemctl disable $dm 2>/dev/null || true
 done
@@ -114,12 +109,12 @@ systemctl enable sddm 2>/dev/null || true
 echo "/usr/bin/sddm" > /etc/X11/default-display-manager
 DEBIAN_FRONTEND=noninteractive dpkg-reconfigure sddm 2>/dev/null || true
 
-# Установить нашу ORIZON тему SDDM
+# Install our ORIZON SDDM theme
 SDDM_THEME_DIR="/usr/share/sddm/themes/orizon"
 mkdir -p "$SDDM_THEME_DIR"
 cp -r "$ORIZON_DIR/kde/sddm/orizon/"* "$SDDM_THEME_DIR/" 2>/dev/null || true
 
-# Конфиг SDDM — используем нашу тему И ВКЛЮЧАЕМ АВТОЛОГИН
+# SDDM config — use our theme AND ENABLE AUTOLOGIN
 mkdir -p /etc/sddm.conf.d
 cat > /etc/sddm.conf.d/orizon.conf << EOF
 [Theme]
@@ -134,13 +129,13 @@ User=$INSTALL_USER
 Session=plasma
 EOF
 
-log_ok "SDDM настроен"
+log_ok "SDDM configured"
 
-# ── 5. Обои и брендинг ───────────────────────────────────────
-log_step "Установка обоев и брендинга..."
+# ── 5. Wallpaper and branding ─────────────────────────────────
+log_step "Installing wallpaper and branding..."
 mkdir -p /usr/share/backgrounds/orizon
 cp "$ORIZON_DIR/wallpapers/"*.png /usr/share/backgrounds/orizon/ 2>/dev/null || true
-# Не копируем grub сюда — он в отдельной папке
+# Do not copy grub here — it goes to a separate folder
 mkdir -p /boot/grub/backgrounds
 cp "$ORIZON_DIR/wallpapers/grub/orizon-grub.png" /boot/grub/backgrounds/ 2>/dev/null || true
 
@@ -155,21 +150,21 @@ cp "$ORIZON_DIR/config/issue" /etc/issue 2>/dev/null || true
 cp "$ORIZON_DIR/config/issue.net" /etc/issue.net 2>/dev/null || true
 echo "orizon" > /etc/hostname
 grep -q "127.0.1.1" /etc/hosts || echo "127.0.1.1	orizon" >> /etc/hosts
-log_ok "Обои и брендинг установлены"
+log_ok "Wallpaper and branding installed"
 
-# ── 6. GTK тема ───────────────────────────────────────────────
-log_step "Установка GTK темы Orizon-Dark..."
+# ── 6. GTK theme ──────────────────────────────────────────────
+log_step "Installing GTK theme Orizon-Dark..."
 mkdir -p /usr/share/themes/Orizon-Dark
 cp -r "$ORIZON_DIR/themes/orizon-gtk/"* /usr/share/themes/Orizon-Dark/ 2>/dev/null || true
-log_ok "GTK тема установлена"
+log_ok "GTK theme installed"
 
-# ── 7. Иконки Papirus ────────────────────────────────────────
-log_step "Установка иконок Papirus..."
+# ── 7. Papirus icons ──────────────────────────────────────────
+log_step "Installing Papirus icons..."
 apt-get install -y -qq papirus-icon-theme 2>/dev/null || true
-log_ok "Papirus-Dark установлен"
+log_ok "Papirus-Dark installed"
 
-# ── 8. Цветовые схемы KDE (тёмная + светлая) ─────────────────
-log_step "Установка цветовых схем Orizon-Dark и Orizon-Light..."
+# ── 8. KDE color schemes (dark + light) ──────────────────────
+log_step "Installing color schemes Orizon-Dark and Orizon-Light..."
 mkdir -p /usr/share/color-schemes
 cp "$ORIZON_DIR/kde/color-scheme/Orizon-Dark.colors" /usr/share/color-schemes/ 2>/dev/null || true
 cp "$ORIZON_DIR/kde/color-scheme/Orizon-Light.colors" /usr/share/color-schemes/ 2>/dev/null || true
@@ -177,26 +172,26 @@ mkdir -p "$USER_HOME/.local/share/color-schemes"
 cp "$ORIZON_DIR/kde/color-scheme/Orizon-Dark.colors" "$USER_HOME/.local/share/color-schemes/" 2>/dev/null || true
 cp "$ORIZON_DIR/kde/color-scheme/Orizon-Light.colors" "$USER_HOME/.local/share/color-schemes/" 2>/dev/null || true
 chown -R "$INSTALL_USER:$INSTALL_USER" "$USER_HOME/.local/share/color-schemes"
-log_ok "Темы установлены"
+log_ok "Themes installed"
 
-# ── 9. Look-and-Feel пакет ───────────────────────────────────
-log_step "Установка Look-and-Feel темы..."
+# ── 9. Look-and-Feel package ──────────────────────────────────
+log_step "Installing Look-and-Feel theme..."
 LAF="/usr/share/plasma/look-and-feel/com.orizon.orizon-dark"
 mkdir -p "$LAF/contents/"{defaults,layouts,previews,splash/images,lockscreen}
 cp -r "$ORIZON_DIR/kde/look-and-feel/"* "$LAF/" 2>/dev/null || true
 cp "$ORIZON_DIR/branding/orizon-logo-256.png" "$LAF/contents/previews/preview.png" 2>/dev/null || true
 cp "$ORIZON_DIR/wallpapers/orizon-splash.png" "$LAF/contents/splash/images/main.png" 2>/dev/null || true
-# Также для пользователя
+# Also for the user
 USER_LAF="$USER_HOME/.local/share/plasma/look-and-feel/com.orizon.orizon-dark"
 mkdir -p "$USER_LAF/contents/"{defaults,layouts,previews,splash/images}
 cp -r "$ORIZON_DIR/kde/look-and-feel/"* "$USER_LAF/" 2>/dev/null || true
 cp "$ORIZON_DIR/branding/orizon-logo-256.png" "$USER_LAF/contents/previews/preview.png" 2>/dev/null || true
 cp "$ORIZON_DIR/wallpapers/orizon-splash.png" "$USER_LAF/contents/splash/images/main.png" 2>/dev/null || true
 chown -R "$INSTALL_USER:$INSTALL_USER" "$USER_HOME/.local/share/plasma" 2>/dev/null || true
-log_ok "Look-and-Feel установлен"
+log_ok "Look-and-Feel installed"
 
-# ── 10. Kvantum ──────────────────────────────────────────────
-log_step "Установка Kvantum темы..."
+# ── 10. Kvantum ───────────────────────────────────────────────
+log_step "Installing Kvantum theme..."
 mkdir -p /usr/share/Kvantum/Orizon
 cp "$ORIZON_DIR/kde/kvantum/Orizon/"* /usr/share/Kvantum/Orizon/ 2>/dev/null || true
 mkdir -p "$USER_HOME/.config/Kvantum/Orizon"
@@ -206,10 +201,10 @@ cat > "$USER_HOME/.config/Kvantum/kvantum.kvconfig" << 'EOF'
 theme=Orizon
 EOF
 chown -R "$INSTALL_USER:$INSTALL_USER" "$USER_HOME/.config/Kvantum" 2>/dev/null || true
-log_ok "Kvantum настроен"
+log_ok "Kvantum configured"
 
-# ── 11. Брендинг «О системе» И ФИКС ИКОНОК ───────────────────
-log_step "Настройка раздела «О системе» и фикс иконок..."
+# ── 11. About This System branding AND ICON FIX ───────────────
+log_step "Configuring 'About This System' section and fixing icons..."
 mkdir -p "$USER_HOME/.config"
 cat > "$USER_HOME/.config/kcm-about-distrorc" << EOF
 [General]
@@ -218,24 +213,24 @@ Website=$ORIZON_LINK
 EOF
 chown "$INSTALL_USER:$INSTALL_USER" "$USER_HOME/.config/kcm-about-distrorc"
 
-# Создаем локальную папку для ярлыков, чтобы не было ошибки прав!
+# Create local applications folder to avoid permission errors
 mkdir -p "$USER_HOME/.local/share/applications"
 
-# Фикс Nautilus
+# Fix Nautilus
 if [ -f "/usr/share/applications/org.gnome.Nautilus.desktop" ]; then
     cp "/usr/share/applications/org.gnome.Nautilus.desktop" "$USER_HOME/.local/share/applications/"
     sed -i "s|^Icon=.*|Icon=$ORIZON_EXPLORER_ICON|g" "$USER_HOME/.local/share/applications/org.gnome.Nautilus.desktop"
     sed -i "s|^Name=.*|Name=Files|g" "$USER_HOME/.local/share/applications/org.gnome.Nautilus.desktop"
 fi
 
-# Фикс Dolphin
+# Fix Dolphin
 if [ -f "/usr/share/applications/org.kde.dolphin.desktop" ]; then
     cp "/usr/share/applications/org.kde.dolphin.desktop" "$USER_HOME/.local/share/applications/"
     sed -i "s|^Icon=.*|Icon=$ORIZON_EXPLORER_ICON|g" "$USER_HOME/.local/share/applications/org.kde.dolphin.desktop"
     sed -i "s|^Name=.*|Name=Files|g" "$USER_HOME/.local/share/applications/org.kde.dolphin.desktop"
 fi
 
-# Иконка «Параметры системы»
+# System Settings icon
 SYS_DESKTOP="/usr/share/applications/systemsettings.desktop"
 if [ -f "$SYS_DESKTOP" ]; then
     cp "$SYS_DESKTOP" "$USER_HOME/.local/share/applications/"
@@ -243,7 +238,7 @@ if [ -f "$SYS_DESKTOP" ]; then
         "$USER_HOME/.local/share/applications/systemsettings.desktop"
 fi
 
-# Иконка Konsole
+# Konsole icon
 for desktop in org.kde.konsole.desktop konsole.desktop; do
     if [ -f "/usr/share/applications/$desktop" ]; then
         cp "/usr/share/applications/$desktop" "$USER_HOME/.local/share/applications/"
@@ -251,7 +246,7 @@ for desktop in org.kde.konsole.desktop konsole.desktop; do
     fi
 done
 
-# Иконка Kate (Notepad)
+# Kate icon (Notepad)
 for desktop in org.kde.kate.desktop kate.desktop; do
     if [ -f "/usr/share/applications/$desktop" ]; then
         cp "/usr/share/applications/$desktop" "$USER_HOME/.local/share/applications/"
@@ -266,7 +261,7 @@ for desktop in libreoffice-startcenter.desktop; do
     fi
 done
 
-# Иконка Gwenview / Photos
+# Gwenview / Photos icon
 for desktop in org.kde.gwenview.desktop gwenview.desktop; do
     if [ -f "/usr/share/applications/$desktop" ]; then
         cp "/usr/share/applications/$desktop" "$USER_HOME/.local/share/applications/"
@@ -274,9 +269,9 @@ for desktop in org.kde.gwenview.desktop gwenview.desktop; do
     fi
 done
 
-# Ubuntu Shop / Snap Store — проверяем все возможные пути, включая snap
+# Ubuntu Shop / Snap Store — check all possible paths, including snap
 for desktop in org.gnome.Software.desktop ubuntu-software.desktop snap-store.desktop; do
-    # Стандартный путь
+    # Standard path
     for src_dir in /usr/share/applications /var/lib/snapd/desktop/applications /snap/snap-store/current/meta/gui; do
         if [ -f "$src_dir/$desktop" ]; then
             cp "$src_dir/$desktop" "$USER_HOME/.local/share/applications/"
@@ -285,14 +280,14 @@ for desktop in org.gnome.Software.desktop ubuntu-software.desktop snap-store.des
         fi
     done
 done
-# Snap Store может быть установлен как snap — тогда .desktop лежит здесь:
+# Snap Store may be installed as a snap — in that case .desktop is here:
 SNAP_STORE_DESKTOP="/var/lib/snapd/desktop/applications/snap-store_snap-store.desktop"
 if [ -f "$SNAP_STORE_DESKTOP" ]; then
     cp "$SNAP_STORE_DESKTOP" "$USER_HOME/.local/share/applications/snap-store_snap-store.desktop"
     sed -i "s|^Icon=.*|Icon=$ORIZON_ICON_UBUNTUSHOP|g" "$USER_HOME/.local/share/applications/snap-store_snap-store.desktop"
 fi
 
-# Иконка VLC (медиаплеер)
+# VLC icon (media player)
 for desktop in vlc.desktop org.videolan.VLC.desktop; do
     if [ -f "/usr/share/applications/$desktop" ]; then
         cp "/usr/share/applications/$desktop" "$USER_HOME/.local/share/applications/"
@@ -300,7 +295,7 @@ for desktop in vlc.desktop org.videolan.VLC.desktop; do
     fi
 done
 
-# Иконка KCalc (калькулятор)
+# KCalc icon (calculator)
 for desktop in org.kde.kcalc.desktop kcalc.desktop; do
     if [ -f "/usr/share/applications/$desktop" ]; then
         cp "/usr/share/applications/$desktop" "$USER_HOME/.local/share/applications/"
@@ -308,7 +303,7 @@ for desktop in org.kde.kcalc.desktop kcalc.desktop; do
     fi
 done
 
-# Иконка календаря (KOrganizer или GNOME Calendar)
+# Calendar icon (KOrganizer or GNOME Calendar)
 for desktop in org.kde.korganizer.desktop org.gnome.Calendar.desktop; do
     if [ -f "/usr/share/applications/$desktop" ]; then
         cp "/usr/share/applications/$desktop" "$USER_HOME/.local/share/applications/"
@@ -316,7 +311,7 @@ for desktop in org.kde.korganizer.desktop org.gnome.Calendar.desktop; do
     fi
 done
 
-# Иконка Discover (магазин приложений)
+# Discover icon (app store)
 for desktop in org.kde.discover.desktop; do
     if [ -f "/usr/share/applications/$desktop" ]; then
         cp "/usr/share/applications/$desktop" "$USER_HOME/.local/share/applications/"
@@ -324,7 +319,7 @@ for desktop in org.kde.discover.desktop; do
     fi
 done
 
-# Иконка Disk Usage Analyzer (Filelight или Baobab)
+# Disk Usage Analyzer icon (Filelight or Baobab)
 for desktop in org.kde.filelight.desktop org.gnome.baobab.desktop; do
     if [ -f "/usr/share/applications/$desktop" ]; then
         cp "/usr/share/applications/$desktop" "$USER_HOME/.local/share/applications/"
@@ -332,10 +327,10 @@ for desktop in org.kde.filelight.desktop org.gnome.baobab.desktop; do
     fi
 done
 
-# ── Иконки модулей System Settings (KCM) ─────────────────────
+# ── System Settings module icons (KCM) ───────────────────────
 mkdir -p "$USER_HOME/.local/share/pixmaps"
 
-# Bluetooth — модуль bluedevil в System Settings
+# Bluetooth — bluedevil module in System Settings
 cp "$ORIZON_ICON_BLUETOOTH" "$USER_HOME/.local/share/pixmaps/orizon-bluetooth.png"
 for kcm_desktop in bluedevil.desktop kcm_bluetooth.desktop; do
     if [ -f "/usr/share/applications/$kcm_desktop" ]; then
@@ -344,7 +339,7 @@ for kcm_desktop in bluedevil.desktop kcm_bluetooth.desktop; do
     fi
 done
 
-# Сеть — модуль plasma-nm в System Settings
+# Network — plasma-nm module in System Settings
 for kcm_desktop in kcm_networkmanagement.desktop plasma-nm.desktop; do
     if [ -f "/usr/share/applications/$kcm_desktop" ]; then
         cp "/usr/share/applications/$kcm_desktop" "$USER_HOME/.local/share/applications/"
@@ -352,7 +347,7 @@ for kcm_desktop in kcm_networkmanagement.desktop plasma-nm.desktop; do
     fi
 done
 
-# Дисплей/экран — модуль kscreen в System Settings
+# Display/screen — kscreen module in System Settings
 for kcm_desktop in kcm_kscreen.desktop kcm_displayandmonitor.desktop; do
     if [ -f "/usr/share/applications/$kcm_desktop" ]; then
         cp "/usr/share/applications/$kcm_desktop" "$USER_HOME/.local/share/applications/"
@@ -360,7 +355,7 @@ for kcm_desktop in kcm_kscreen.desktop kcm_displayandmonitor.desktop; do
     fi
 done
 
-# «О системе» — модуль kcm-about-distro в System Settings
+# About This System — kcm-about-distro module in System Settings
 for kcm_desktop in kcm_about-distro.desktop kcm_aboutsystem.desktop; do
     if [ -f "/usr/share/applications/$kcm_desktop" ]; then
         cp "/usr/share/applications/$kcm_desktop" "$USER_HOME/.local/share/applications/"
@@ -368,7 +363,7 @@ for kcm_desktop in kcm_about-distro.desktop kcm_aboutsystem.desktop; do
     fi
 done
 
-# Системный монитор — проверяем все варианты имён и snap
+# System Monitor — check all name variants and snap
 for desktop in org.kde.plasma-systemmonitor.desktop gnome-system-monitor.desktop org.gnome.SystemMonitor.desktop ksysguard.desktop; do
     for src_dir in /usr/share/applications /var/lib/snapd/desktop/applications; do
         if [ -f "$src_dir/$desktop" ]; then
@@ -378,14 +373,14 @@ for desktop in org.kde.plasma-systemmonitor.desktop gnome-system-monitor.desktop
         fi
     done
 done
-# gnome-system-monitor может быть установлен как snap
+# gnome-system-monitor may be installed as a snap
 SYSMON_SNAP_DESKTOP="/var/lib/snapd/desktop/applications/gnome-system-monitor_gnome-system-monitor.desktop"
 if [ -f "$SYSMON_SNAP_DESKTOP" ]; then
     cp "$SYSMON_SNAP_DESKTOP" "$USER_HOME/.local/share/applications/gnome-system-monitor_gnome-system-monitor.desktop"
     sed -i "s|^Icon=.*|Icon=$ORIZON_ICON_SYSMON|g" "$USER_HOME/.local/share/applications/gnome-system-monitor_gnome-system-monitor.desktop"
 fi
 
-# Иконки LibreOffice
+# LibreOffice icons
 for desktop in libreoffice-writer.desktop; do
     if [ -f "/usr/share/applications/$desktop" ]; then
         cp "/usr/share/applications/$desktop" "$USER_HOME/.local/share/applications/"
@@ -444,14 +439,14 @@ for desktop in org.kde.spectacle.desktop spectacle.desktop; do
     fi
 done
 
-# ── Иконка корзины для Plasma Desktop Widget ──────────────────
+# ── Trash bin icon for Plasma Desktop Widget ──────────────────
 for size in 32x32 48x48 128x128; do
     mkdir -p "$USER_HOME/.local/share/icons/hicolor/$size/places"
     cp "$ORIZON_ICON_TRASHBIN" "$USER_HOME/.local/share/icons/hicolor/$size/places/user-trash.png"
     cp "$ORIZON_ICON_TRASHBIN" "$USER_HOME/.local/share/icons/hicolor/$size/places/user-trash-full.png"
 done
 
-# ── Глобальная установка всех иконок в /usr/share/pixmaps/ ────
+# ── Global install of all icons to /usr/share/pixmaps/ ────────
 cp "$ORIZON_ICON_BLUETOOTH"   /usr/share/pixmaps/orizon/ 2>/dev/null || true
 cp "$ORIZON_ICON_CALCULATOR"  /usr/share/pixmaps/orizon/ 2>/dev/null || true
 cp "$ORIZON_ICON_CALENDAR"    /usr/share/pixmaps/orizon/ 2>/dev/null || true
@@ -483,14 +478,14 @@ chown -R "$INSTALL_USER:$INSTALL_USER" "$USER_HOME/.local/share/applications"
 chown -R "$INSTALL_USER:$INSTALL_USER" "$USER_HOME/.local/share/pixmaps"
 chown -R "$INSTALL_USER:$INSTALL_USER" "$USER_HOME/.local/share/icons"
 
-# Обновить глобальный кэш иконок
+# Update global icon cache
 gtk-update-icon-cache -f /usr/share/icons/hicolor 2>/dev/null || true
 update-desktop-database "$USER_HOME/.local/share/applications" 2>/dev/null || true
 
-log_ok "Брендинг «О системе» и иконки приложений настроены"
+log_ok "About This System branding and application icons configured"
 
-# ── 12. Konsole профиль ───────────────────────────────────────
-log_step "Настройка терминала Konsole..."
+# ── 12. Konsole profile ───────────────────────────────────────
+log_step "Configuring Konsole terminal..."
 KONSOLE_DIR="$USER_HOME/.local/share/konsole"
 mkdir -p "$KONSOLE_DIR"
 cat > "$KONSOLE_DIR/Orizon.colorscheme" << 'EOF'
@@ -580,34 +575,34 @@ cat > "$USER_HOME/.config/konsolerc" << 'EOF'
 DefaultProfile=Orizon.profile
 EOF
 chown -R "$INSTALL_USER:$INSTALL_USER" "$KONSOLE_DIR" "$USER_HOME/.config/konsolerc"
-log_ok "Konsole настроен"
+log_ok "Konsole configured"
 
-# ── 13. Применить настройки KDE И ГОРЯЧИЕ КЛАВИШИ ────────────
-log_step "Применение настроек KDE, горячих клавиш и сессии..."
+# ── 13. Apply KDE settings AND HOTKEYS ────────────────────────
+log_step "Applying KDE settings, hotkeys and session..."
 KW="sudo -u $INSTALL_USER kwriteconfig5"
 
-# ОТКЛЮЧЕНИЕ АВТОЗАПУСКА ПРИЛОЖЕНИЙ ПРИ СТАРТЕ
+# DISABLE APP RESTORE ON LOGIN
 $KW --file ksmserverrc --group General --key loginMode "emptySession" 2>/dev/null || true
 DOCS_URL="https://docs.google.com/document/d/1kA9LK5qkzpukMxPUKEU55RwFFWAMBbIhvoPwDbxWHHc/edit?usp=sharing"
-# ГОРЯЧИЕ КЛАВИШИ (Win Style)
+# HOTKEYS (Win Style)
 $KW --file kglobalshortcutsrc --group "org.kde.konsole.desktop" --key "_launch" "Ctrl+Alt+T,none,Konsole" 2>/dev/null || true
 $KW --file kglobalshortcutsrc --group "org.kde.dolphin.desktop" --key "_launch" "Meta+E,none,Dolphin" 2>/dev/null || true
 $KW --file kglobalshortcutsrc --group "kwin" --key "Show Desktop" "Meta+D,Meta+D,Show Desktop" 2>/dev/null || true
 $KW --file kglobalshortcutsrc --group "org.kde.krunner.desktop" --key "_launch" "Meta+R,Alt+F2,KRunner" 2>/dev/null || true
 $KW --file kglobalshortcutsrc --group "ksmserver" --key "Lock Session" "Meta+L,Meta+L,Lock Session" 2>/dev/null || true
 $KW --file kglobalshortcutsrc --group "org.kde.spectacle.desktop" --key "_launch" "Print,Print,Spectacle" 2>/dev/null || true
-$KW --file kglobalshortcutsrc --group "org.kde.spectacle.desktop" --key "RectangularRegionScreenShot" "Meta+Shift+S,none,Выделение области" 2>/dev/null || true
+$KW --file kglobalshortcutsrc --group "org.kde.spectacle.desktop" --key "RectangularRegionScreenShot" "Meta+Shift+S,none,Select region" 2>/dev/null || true
 $KW --file kglobalshortcutsrc --group "org.kde.ark.desktop" --key "_launch" "Meta+Shift+A,none,Ark" 2>/dev/null || true
 
 
-# Светлая тема по умолчанию
+# Light theme by default
 $KW --file kdeglobals --group General --key ColorScheme "Orizon-Light" 2>/dev/null || true
 $KW --file kdeglobals --group KDE --key LookAndFeelPackage "org.kde.breeze.desktop" 2>/dev/null || true
 
-# Иконки
+# Icons
 $KW --file kdeglobals --group Icons --key Theme "Papirus" 2>/dev/null || true
 
-# Шрифты
+# Fonts
 $KW --file kdeglobals --group General --key font "Ubuntu,11,-1,5,50,0,0,0,0,0" 2>/dev/null || true
 $KW --file kdeglobals --group General --key fixed "JetBrains Mono,11,-1,5,50,0,0,0,0,0" 2>/dev/null || true
 $KW --file kdeglobals --group General --key toolBarFont "Ubuntu,11,-1,5,50,0,0,0,0,0" 2>/dev/null || true
@@ -617,9 +612,9 @@ $KW --file kdeglobals --group General --key menuFont "Ubuntu,11,-1,5,50,0,0,0,0,
 $KW --file kwinrc --group Compositing --key Enabled true 2>/dev/null || true
 $KW --file kwinrc --group Compositing --key Backend OpenGL 2>/dev/null || true
 
-# ── ФИКС: Иконка кнопки «Пуск» через прямую запись в конфиг ──
-# Если файл конфига Plasma уже существует (повторная установка),
-# обновляем icon= во всех секциях Kickoff/Kicker/SimpleMenu
+# ── FIX: Start button icon via direct config write ────────────
+# If the Plasma config file already exists (reinstall),
+# update icon= in all Kickoff/Kicker/SimpleMenu sections
 PLASMA_CFG="$USER_HOME/.config/plasma-org.kde.plasma.desktop-appletsrc"
 if [ -f "$PLASMA_CFG" ]; then
     python3 - "$PLASMA_CFG" "$ORIZON_LOGO" << 'PYEOF'
@@ -635,10 +630,10 @@ in_kickoff_section = False
 result = []
 
 for line in lines:
-    # Определяем, входим ли в секцию виджета меню
+    # Check if we're entering a menu widget section
     if line.startswith('['):
         in_kickoff_section = any(x in line for x in ['kickoff', 'kicker', 'simplemenu', 'Kickoff', 'Kicker', 'SimpleMenu'])
-    # Если мы в нужной секции и встречаем icon= — заменяем
+    # If in the right section and we find icon= — replace it
     if in_kickoff_section and re.match(r'^icon\s*=', line):
         line = f'icon={icon}\n'
     result.append(line)
@@ -646,7 +641,7 @@ for line in lines:
 with open(path, 'w') as f:
     f.writelines(result)
 PYEOF
-    log_ok "Иконка кнопки Пуск обновлена в существующем конфиге"
+    log_ok "Start button icon updated in existing config"
 fi
 
 mkdir -p "$USER_HOME/.config"
@@ -658,7 +653,7 @@ chown "$INSTALL_USER:$INSTALL_USER" "$USER_HOME/.config/orizon-kickoff-icon" 2>/
 $KW --file ksplashrc --group KSplash --key Theme "com.orizon.orizon-dark" 2>/dev/null || true
 $KW --file ksplashrc --group KSplash --key Engine "KSplash" 2>/dev/null || true
 
-# Экран блокировки
+# Lock screen
 $KW --file kscreenlockerrc --group Greeter --key Theme "com.orizon.orizon-dark" 2>/dev/null || true
 $KW --file kscreenlockerrc --group Greeter --key WallpaperPlugin "org.kde.image" 2>/dev/null || true
 $KW --file kscreenlockerrc --group "Greeter/Wallpaper/org.kde.image/General" \
@@ -666,25 +661,25 @@ $KW --file kscreenlockerrc --group "Greeter/Wallpaper/org.kde.image/General" \
 $KW --file kscreenlockerrc --group Daemon --key Autolock true 2>/dev/null || true
 $KW --file kscreenlockerrc --group Daemon --key Timeout 10 2>/dev/null || true
 
-log_ok "Настройки KDE, горячие клавиши и блокировка автозапуска применены"
+log_ok "KDE settings, hotkeys and autostart lock applied"
 
-# ── 14. Plasma: первый запуск — обои и иконка Пуск ───────────
-log_step "Настройка автозапуска для обоев и кнопки Пуск..."
+# ── 14. Plasma: first run — wallpaper and Start button ────────
+log_step "Setting up autostart for wallpaper and Start button..."
 BIN_DIR="$USER_HOME/.local/bin"
 AUTOSTART_DIR="$USER_HOME/.config/autostart"
 mkdir -p "$BIN_DIR" "$AUTOSTART_DIR"
 
 cat > "$BIN_DIR/orizon-first-run.sh" << FIRSTRUN
 #!/bin/bash
-# Ждём полной загрузки Plasma (с проверкой вместо слепого sleep)
+# Wait for Plasma to fully load (with check instead of blind sleep)
 for i in \$(seq 1 30); do
     qdbus org.kde.plasmashell /PlasmaShell 2>/dev/null && break
     sleep 2
 done
-# Дополнительная пауза для стабилизации
+# Extra pause for stability
 sleep 3
 
-# Ставим наши обои через официальный API Plasma
+# Set our wallpaper via official Plasma API
 qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "
     var allDesktops = desktops();
     for (var i = 0; i < allDesktops.length; i++) {
@@ -695,11 +690,11 @@ qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "
     }
 " 2>/dev/null || true
 
-# Запасной вариант
+# Fallback
 plasma-apply-wallpaperimage "$WALLPAPER_PATH" 2>/dev/null || true
 
-# Иконка кнопки «Пуск» — наш логотип
-# Перебираем все известные типы виджета меню «Пуск»
+# Start button icon — our logo
+# Iterate over all known menu widget types
 qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "
     var allWidgets = widgets();
     for (var i = 0; i < allWidgets.length; i++) {
@@ -714,7 +709,7 @@ qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "
     }
 " 2>/dev/null || true
 
-# Иконка корзины на рабочем столе через Plasma API
+# Trash bin icon on desktop via Plasma API
 qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "
     var allWidgets = widgets();
     for (var i = 0; i < allWidgets.length; i++) {
@@ -727,15 +722,15 @@ qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "
     }
 " 2>/dev/null || true
 
-# Обновить кэш иконок gtk + hicolor
+# Update gtk + hicolor icon cache
 gtk-update-icon-cache -f ~/.local/share/icons/hicolor 2>/dev/null || true
 
-# Очистить кэш иконок KDE
+# Clear KDE icon cache
 rm -f ~/.cache/icon-cache.kcache
 rm -rf ~/.cache/plasma-svgelements-*
 kbuildsycoca5 --noincremental 2>/dev/null || true
 
-# НЕ удаляем себя автоматически — удали вручную после проверки:
+# Do NOT auto-delete — remove manually after verification:
 # rm -f "$AUTOSTART_DIR/orizon-first-run.desktop"
 FIRSTRUN
 
@@ -752,10 +747,10 @@ X-GNOME-Autostart-enabled=true
 EOF
 
 chown -R "$INSTALL_USER:$INSTALL_USER" "$BIN_DIR" "$AUTOSTART_DIR"
-log_ok "Автозапуск для обоев и кнопки Пуск готов"
+log_ok "Autostart for wallpaper and Start button ready"
 
-# ── 15. GRUB настройка ───────────────────────────────────────
-log_step "Настройка GRUB..."
+# ── 15. GRUB configuration ────────────────────────────────────
+log_step "Configuring GRUB..."
 if [ -f /etc/default/grub ]; then
     sed -i 's/^GRUB_TIMEOUT=.*/GRUB_TIMEOUT=3/' /etc/default/grub
     sed -i 's/^GRUB_DISTRIBUTOR=.*/GRUB_DISTRIBUTOR="ORIZON"/' /etc/default/grub
@@ -766,10 +761,10 @@ if [ -f /etc/default/grub ]; then
     fi
     update-grub 2>/dev/null || true
 fi
-log_ok "GRUB настроен"
+log_ok "GRUB configured"
 
-# ── 16. Plymouth ─────────────────────────────────────────────
-log_step "Установка Plymouth темы..."
+# ── 16. Plymouth ──────────────────────────────────────────────
+log_step "Installing Plymouth theme..."
 apt-get install -y -qq plymouth plymouth-themes 2>/dev/null || true
 PDIR="/usr/share/plymouth/themes/orizon"
 mkdir -p "$PDIR"
@@ -779,10 +774,10 @@ update-alternatives --install /usr/share/plymouth/themes/default.plymouth \
 update-alternatives --set default.plymouth \
     "$PDIR/orizon.plymouth" 2>/dev/null || true
 update-initramfs -u 2>/dev/null || true
-log_ok "Plymouth установлен"
+log_ok "Plymouth installed"
 
-# ── 17. Принудительная сессия Plasma ─────────────────────────
-log_step "Установка Plasma сессией по умолчанию..."
+# ── 17. Force Plasma session ──────────────────────────────────
+log_step "Setting Plasma as default session..."
 mkdir -p /var/lib/AccountsService/users/
 cat > "/var/lib/AccountsService/users/$INSTALL_USER" << EOF
 [User]
@@ -792,38 +787,38 @@ EOF
 echo -e "[Desktop]\nSession=plasma" > "$USER_HOME/.dmrc"
 chown "$INSTALL_USER:$INSTALL_USER" "$USER_HOME/.dmrc"
 update-alternatives --set x-session-manager /usr/bin/startplasma-x11 2>/dev/null || true
-log_ok "Сессия Plasma установлена по умолчанию"
+log_ok "Plasma session set as default"
 
-# ── 18. Шрифты и доп. приложения ─────────────────────────────
-log_step "Установка шрифтов и приложений..."
+# ── 18. Fonts and additional apps ─────────────────────────────
+log_step "Installing fonts and apps..."
 apt-get install -y -qq \
     fonts-ubuntu fonts-noto fonts-jetbrains-mono fonts-firacode \
     neofetch htop btop curl wget git \
     zip unzip p7zip-full \
     vlc conky-all yad zenity \
     2>/dev/null || true
-log_ok "Шрифты и приложения установлены"
+log_ok "Fonts and apps installed"
 
-# ── 19. Bash конфиг ──────────────────────────────────────────
-log_step "Настройка терминала..."
+# ── 19. Bash config ───────────────────────────────────────────
+log_step "Configuring terminal..."
 BASHRC="$USER_HOME/.bashrc"
-# Удаляем старую версию конфига если есть, пишем свежую
+# Remove old config version if present, write a fresh one
 if grep -q "ORIZON Linux System" "$BASHRC" 2>/dev/null; then
     sed -i '/# ═══.*ORIZON Linux System/,$d' "$BASHRC" 2>/dev/null || true
 fi
 cat "$ORIZON_DIR/config/bashrc-orizon.sh" >> "$BASHRC"
 chown "$INSTALL_USER:$INSTALL_USER" "$BASHRC"
-log_ok "Bash настроен"
+log_ok "Bash configured"
 
-# ── 20. Установка ORIZON CLI и скриптов ─────────────────────
-log_step "Установка ORIZON CLI..."
+# ── 20. Install ORIZON CLI and scripts ────────────────────────
+log_step "Installing ORIZON CLI..."
 mkdir -p /opt/orizon/scripts
 cp "$ORIZON_DIR/scripts/update.sh"  /opt/orizon/scripts/update.sh
 cp "$ORIZON_DIR/scripts/apply-kde-theme.sh" /opt/orizon/scripts/apply-kde-theme.sh
 cp "$ORIZON_DIR/scripts/hotkeys.sh" /opt/orizon/scripts/hotkeys.sh
 cp "$ORIZON_DIR/scripts/orizon-welcome.sh" /opt/orizon/scripts/orizon-welcome.sh
 chmod +x /opt/orizon/scripts/*.sh
-# Копируем hotkeys.sh в автозапуск первого входа — запустится один раз
+# Copy hotkeys.sh to first-login autostart — runs once
 mkdir -p "$USER_HOME/.config/autostart"
 cat > "$USER_HOME/.config/autostart/orizon-hotkeys.desktop" << EOF
 [Desktop Entry]
@@ -845,26 +840,26 @@ NoDisplay=false
 X-GNOME-Autostart-enabled=true
 EOF
 chown "$INSTALL_USER:$INSTALL_USER" "$USER_HOME/.config/autostart/orizon-welcome.desktop"
-log_ok "ORIZON CLI и горячие клавиши готовы"
+log_ok "ORIZON CLI and hotkeys ready"
 
 sudo ln -sfn "$ORIZON_DIR/branding" /opt/orizon/branding
 sudo apt install -y xorg
 
-# ── 21. Очистка ──────────────────────────────────────────────
-log_step "Очистка системы..."
+# ── 21. Cleanup ───────────────────────────────────────────────
+log_step "Cleaning up system..."
 apt-get autoremove -y -qq 2>/dev/null || true
 apt-get autoclean -qq 2>/dev/null || true
-log_ok "Готово"
+log_ok "Done"
 
 
 echo ""
 echo -e "${GREEN}${BOLD}╔══════════════════════════════════════════════╗${NC}"
-echo -e "${GREEN}${BOLD}║   ORIZON установлен успешно!  🚀             ║${NC}"
+echo -e "${GREEN}${BOLD}║   ORIZON installed successfully!  🚀          ║${NC}"
 echo -e "${GREEN}${BOLD}╚══════════════════════════════════════════════╝${NC}"
 echo ""
-echo -e "  ${CYAN}Перезагрузи систему:${NC} ${BOLD}sudo reboot${NC}"
-echo -e "  ${CYAN}После первого входа проверь иконку кнопки Пуск.${NC}"
-echo -e "  ${CYAN}Если всё ок — удали автозапуск вручную:${NC}"
+echo -e "  ${CYAN}Reboot the system:${NC} ${BOLD}sudo reboot${NC}"
+echo -e "  ${CYAN}After first login check the Start button icon.${NC}"
+echo -e "  ${CYAN}If everything looks good — remove autostart manually:${NC}"
 echo -e "  ${BOLD}rm ~/.config/autostart/orizon-first-run.desktop${NC}"
-echo -e "  ${CYAN}Документация, новая версия ОС, поддержка и телеграм-канал: https://taplink.cc/orizon${NC}"
+echo -e "  ${CYAN}Documentation, new OS version, support and Telegram channel: https://taplink.cc/orizon${NC}"
 echo -e ""
