@@ -859,8 +859,5 @@ echo -e "${GREEN}${BOLD}║   ORIZON installed successfully!  🚀          ║$
 echo -e "${GREEN}${BOLD}╚══════════════════════════════════════════════╝${NC}"
 echo ""
 echo -e "  ${CYAN}Reboot the system:${NC} ${BOLD}sudo reboot${NC}"
-echo -e "  ${CYAN}After first login check the Start button icon.${NC}"
-echo -e "  ${CYAN}If everything looks good — remove autostart manually:${NC}"
-echo -e "  ${BOLD}rm ~/.config/autostart/orizon-first-run.desktop${NC}"
 echo -e "  ${CYAN}Documentation, new OS version, support and Telegram channel: https://taplink.cc/orizon${NC}"
 echo -e ""
