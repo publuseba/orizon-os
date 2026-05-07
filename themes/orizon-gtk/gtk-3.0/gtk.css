@@ -1,0 +1,329 @@
+/* ORIZON Dark GTK3 Theme */
+
+@define-color bg_color #0d1117;
+@define-color fg_color #e6edf3;
+@define-color base_color #161b22;
+@define-color text_color #e6edf3;
+@define-color selected_bg_color #00d4ff;
+@define-color selected_fg_color #0d1117;
+@define-color tooltip_bg_color #1c2128;
+@define-color tooltip_fg_color #e6edf3;
+@define-color accent #00d4ff;
+@define-color accent_dark #0088cc;
+@define-color surface #161b22;
+@define-color surface2 #21262d;
+@define-color border #30363d;
+@define-color muted #8b949e;
+
+* {
+    -gtk-icon-style: regular;
+}
+
+window {
+    background-color: @bg_color;
+    color: @fg_color;
+}
+
+/* Buttons */
+button {
+    background-color: @surface2;
+    color: @fg_color;
+    border: 1px solid @border;
+    border-radius: 6px;
+    padding: 6px 12px;
+    transition: all 200ms ease;
+}
+
+button:hover {
+    background-color: @surface;
+    border-color: @accent;
+    color: @accent;
+}
+
+button:active,
+button:checked {
+    background-color: @accent_dark;
+    color: @selected_fg_color;
+    border-color: @accent;
+}
+
+button.suggested-action {
+    background-color: @accent;
+    color: @selected_fg_color;
+    border-color: @accent_dark;
+}
+
+button.suggested-action:hover {
+    background-color: #33ddff;
+}
+
+button.destructive-action {
+    background-color: #da3633;
+    color: white;
+    border-color: #f85149;
+}
+
+/* Header bars */
+headerbar {
+    background-color: @surface;
+    color: @fg_color;
+    border-bottom: 1px solid @border;
+    padding: 4px 8px;
+}
+
+headerbar .title {
+    color: @fg_color;
+    font-weight: bold;
+}
+
+headerbar button {
+    background-color: transparent;
+    border: none;
+    color: @muted;
+    border-radius: 4px;
+}
+
+headerbar button:hover {
+    background-color: @surface2;
+    color: @fg_color;
+}
+
+/* Menus */
+menu,
+.menu,
+.context-menu {
+    background-color: @surface;
+    border: 1px solid @border;
+    border-radius: 8px;
+    color: @fg_color;
+    padding: 4px 0;
+}
+
+menuitem {
+    padding: 6px 12px;
+    border-radius: 4px;
+}
+
+menuitem:hover {
+    background-color: @surface2;
+    color: @accent;
+}
+
+menu separator {
+    background-color: @border;
+    margin: 4px 8px;
+}
+
+/* Scrollbars */
+scrollbar {
+    background-color: transparent;
+    border: none;
+}
+
+scrollbar slider {
+    background-color: @border;
+    border-radius: 10px;
+    min-width: 6px;
+    min-height: 6px;
+}
+
+scrollbar slider:hover {
+    background-color: @muted;
+}
+
+scrollbar.vertical slider {
+    min-width: 6px;
+}
+
+scrollbar.horizontal slider {
+    min-height: 6px;
+}
+
+/* Entries */
+entry {
+    background-color: @surface;
+    color: @fg_color;
+    border: 1px solid @border;
+    border-radius: 6px;
+    padding: 6px 10px;
+    caret-color: @accent;
+}
+
+entry:focus {
+    border-color: @accent;
+    box-shadow: 0 0 0 2px alpha(@accent, 0.3);
+}
+
+/* Notebooks / Tabs */
+notebook > header {
+    background-color: @surface;
+    border-bottom: 1px solid @border;
+}
+
+notebook > header tab {
+    color: @muted;
+    padding: 6px 16px;
+    border: none;
+}
+
+notebook > header tab:checked {
+    color: @fg_color;
+    border-bottom: 2px solid @accent;
+}
+
+notebook > header tab:hover {
+    color: @fg_color;
+    background-color: @surface2;
+}
+
+/* Lists / TreeView */
+treeview,
+listview {
+    background-color: @base_color;
+    color: @fg_color;
+}
+
+treeview:selected,
+listview row:selected {
+    background-color: alpha(@accent, 0.25);
+    color: @fg_color;
+}
+
+/* Sidebar */
+.sidebar {
+    background-color: @surface;
+    border-right: 1px solid @border;
+}
+
+/* Status bar */
+statusbar {
+    background-color: @surface;
+    border-top: 1px solid @border;
+    color: @muted;
+    font-size: 0.85em;
+}
+
+/* Switches */
+switch {
+    background-color: @border;
+    border-radius: 16px;
+    border: none;
+}
+
+switch:checked {
+    background-color: @accent;
+}
+
+switch slider {
+    background-color: white;
+    border-radius: 50%;
+    min-width: 20px;
+    min-height: 20px;
+}
+
+/* Progress bars */
+progressbar trough {
+    background-color: @surface2;
+    border-radius: 4px;
+}
+
+progressbar progress {
+    background-color: @accent;
+    border-radius: 4px;
+}
+
+/* Tooltips */
+tooltip {
+    background-color: @tooltip_bg_color;
+    color: @tooltip_fg_color;
+    border: 1px solid @border;
+    border-radius: 6px;
+    padding: 4px 8px;
+}
+
+/* Popovers */
+popover {
+    background-color: @surface;
+    border: 1px solid @border;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+}
+
+/* Scale/Slider */
+scale trough {
+    background-color: @surface2;
+    border-radius: 4px;
+}
+
+scale highlight {
+    background-color: @accent;
+    border-radius: 4px;
+}
+
+scale slider {
+    background-color: @accent;
+    border-radius: 50%;
+    min-width: 16px;
+    min-height: 16px;
+}
+
+/* SpinButton */
+spinbutton {
+    background-color: @surface;
+    border: 1px solid @border;
+    border-radius: 6px;
+    color: @fg_color;
+}
+
+/* Expander */
+expander arrow {
+    color: @muted;
+}
+
+expander:checked arrow {
+    color: @accent;
+}
+
+/* Taskbar / Panel specific */
+.xfce4-panel {
+    background-color: rgba(13, 17, 23, 0.95);
+    color: @fg_color;
+    border-top: 1px solid @border;
+}
+
+/* Check/Radio buttons */
+checkbutton check,
+radiobutton radio {
+    background-color: @surface;
+    border: 1px solid @border;
+    border-radius: 3px;
+}
+
+checkbutton check:checked,
+radiobutton radio:checked {
+    background-color: @accent;
+    border-color: @accent;
+    color: @selected_fg_color;
+}
+
+/* ComboBox */
+combobox button {
+    background-color: @surface;
+    border: 1px solid @border;
+    color: @fg_color;
+}
+
+combobox button:hover {
+    border-color: @accent;
+}
+
+/* Infobars */
+infobar {
+    background-color: @surface2;
+    border-bottom: 1px solid @border;
+}
+
+infobar.info { border-left: 3px solid @accent; }
+infobar.warning { border-left: 3px solid #d29922; }
+infobar.error { border-left: 3px solid #f85149; }
+infobar.success { border-left: 3px solid #3fb950; }

@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=X-GNOME-Metatheme
+Name=Orizon-Dark
+Comment=ORIZON Dark GTK Theme – Intelligent Linux System
+Encoding=UTF-8
+
+[X-GNOME-Metatheme]
+GtkTheme=Orizon-Dark
+MetacityTheme=Orizon-Dark
+IconTheme=Papirus-Dark
+CursorTheme=DMZ-White
+ButtonLayout=close,minimize,maximize:menu

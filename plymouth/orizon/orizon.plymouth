@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=ORIZON
+Description=ORIZON Linux System Boot Splash
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/orizon
+ScriptFile=/usr/share/plymouth/themes/orizon/orizon.script
