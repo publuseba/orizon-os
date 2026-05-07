@@ -49,104 +49,6 @@ set_hotkey "org.kde.spectacle.desktop" "ActiveWindowScreenShot" \
 set_hotkey "org.kde.spectacle.desktop" "RectangularRegionScreenShot" \
     "Meta+Shift+S,none,Region selection" "Win+Shift+S → Select region"
 
-# ── ORIZON documentation (open in browser) ───────────────────
-DOCS_URL="https://docs.google.com/document/d/1kA9LK5qkzpukMxPUKEU55RwFFWAMBbIhvoPwDbxWHHc/edit?usp=sharing"
-kwriteconfig5 --file kglobalshortcutsrc \
-    --group "org.kde.kglobalaccel" \
-    --key "Alt+F1" "none"
-# Register via custom shortcut (khotkeys)
-KHOTKEYS_CFG="$HOME/.config/khotkeysrc"
-# Add section if it doesn't exist
-if ! grep -q "orizon_docs" "$KHOTKEYS_CFG" 2>/dev/null; then
-    python3 - <<PYEOF
-import configparser, os, re
-
-cfg_path = os.path.expanduser("~/.config/khotkeysrc")
-
-# Read as text to preserve section order
-try:
-    with open(cfg_path, "r") as f:
-        content = f.read()
-except FileNotFoundError:
-    content = "[Data]\nDataCount=0\n"
-
-# Get current DataCount
-m = re.search(r'^\[Data\]\s*\nDataCount=(\d+)', content, re.MULTILINE)
-count = int(m.group(1)) if m else 0
-new_id = count + 1
-
-# Patch DataCount
-content = re.sub(
-    r'(^\[Data\]\s*\nDataCount=)\d+',
-    lambda mo: mo.group(1) + str(new_id),
-    content, flags=re.MULTILINE
-)
-
-# Append new sections at the end
-docs_url = "$DOCS_URL"
-ark_entry = f"""
-[Data_{new_id}]
-Comment=ORIZON Docs
-DataCount=1
-Enabled=true
-Name=orizon_docs
-SystemGroup=0
-Type=ACTION_DATA_GROUP
-
-[Data_{new_id}Action0]
-CommandURL=xdg-open {docs_url}
-Type=COMMAND_URL_ACTION_DATA
-
-[Data_{new_id}Trigger0]
-Key=Alt+F1
-Type=SHORTCUT
-Uuid={{orizon-docs-trigger}}
-
-[Data_{new_id}Conditions]
-AgeRaw=0
-Comment=
-ConditionCount=0
-"""
-
-ark_id = new_id + 1
-content_before_ark = re.sub(
-    r'(^\[Data\]\s*\nDataCount=)\d+',
-    lambda mo: mo.group(1) + str(ark_id),
-    content, flags=re.MULTILINE
-)
-
-ark_entry2 = f"""
-[Data_{ark_id}]
-Comment=Ark Archive Manager
-DataCount=1
-Enabled=true
-Name=orizon_ark
-SystemGroup=0
-Type=ACTION_DATA_GROUP
-
-[Data_{ark_id}Action0]
-CommandURL=ark
-Type=COMMAND_URL_ACTION_DATA
-
-[Data_{ark_id}Trigger0]
-Key=Meta+Shift+A
-Type=SHORTCUT
-Uuid={{orizon-ark-trigger}}
-
-[Data_{ark_id}Conditions]
-AgeRaw=0
-Comment=
-ConditionCount=0
-"""
-
-with open(cfg_path, "w") as f:
-    f.write(content_before_ark + docs_url + ark_entry2)
-
-print("khotkeysrc updated")
-PYEOF
-fi
-echo -e "${GREEN}  ✓${NC} Alt+F1 → ORIZON Documentation"
-
 # ── Ark (archive manager) ─────────────────────────────────────
 echo -e "${GREEN}  ✓${NC} Win+Shift+A → Ark"
 
@@ -176,6 +78,5 @@ echo -e "  ${CYAN}Win+R${NC}         — KRunner"
 echo -e "  ${CYAN}Win+L${NC}         — Lock"
 echo -e "  ${CYAN}Print${NC}         — Screenshot"
 echo -e "  ${CYAN}Win+Shift+S${NC}   — Select region"
-echo -e "  ${CYAN}Alt+F1${NC}        — ORIZON Documentation"
 echo -e "  ${CYAN}Win+Shift+A${NC}   — Ark"
 echo ""
