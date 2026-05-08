@@ -88,7 +88,7 @@ log_ok "PAM fixed"
 # ── 3. Install KDE Plasma ─────────────────────────────────────
 log_step "Installing KDE Plasma..."
 sudo apt update
-sudo apt install aptitude
+sudo apt install -y aptitude
 sudo aptitude install -y kde-plasma-desktop
 sudo aptitude install -y gwenview
 sudo aptitude install -y ark
