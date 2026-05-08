@@ -94,7 +94,8 @@ sudo aptitude install -y ark
 sudo aptitude install -y konsole
 sudo aptitude install -y kate
 sudo aptitude install -y okular
-sudo aptitude install -y spectacle
+sudo aptitude install -y kde-spectacle
+sudo aptitude install -y libreoffice
 sudo apt install -y sddm
 sudo systemctl enable sddm
 log_ok "KDE Plasma installed"
