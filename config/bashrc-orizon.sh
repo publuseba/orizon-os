@@ -13,7 +13,7 @@ export TERM=xterm-256color
 # ── Prompt ──────────────────────────────────────────────────
 PS1='\[\033[0;36m\]┌─[\[\033[1;37m\]\u\[\033[0;36m\]@\[\033[0;34m\]orizon\[\033[0;36m\]] \[\033[0;33m\]\w\[\033[0m\]\n\[\033[0;36m\]└─\[\033[1;36m\]❯\[\033[0m\] '
 
-# ── Навигация ───────────────────────────────────────────────
+# ── Navigation ───────────────────────────────────────────────
 alias ll='ls -alFh --color=auto'
 alias la='ls -A --color=auto'
 alias l='ls -CF --color=auto'
@@ -21,7 +21,7 @@ alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
 
-# ── Система ─────────────────────────────────────────────────
+# ── System ─────────────────────────────────────────────────
 alias update='sudo apt update && sudo apt upgrade -y'
 alias clean='sudo apt autoremove -y && sudo apt autoclean'
 alias ports='ss -tulpn'
@@ -31,7 +31,7 @@ alias topcpu='ps aux --sort=-%cpu | head -10'
 alias topmem='ps aux --sort=-%mem | head -10'
 alias myip='curl -s https://api.ipify.org && echo'
 
-# ── Безопасность ────────────────────────────────────────────
+# ── Safety ────────────────────────────────────────────
 alias rm='rm -i'
 alias cp='cp -i'
 alias mv='mv -i'
@@ -42,6 +42,7 @@ alias ga='git add'
 alias gc='git commit'
 alias gp='git push'
 alias gl='git log --oneline --graph --color'
+alias gcl='git clone'
 
 # ── iamroot ─────────────────────────────────────────────────
 alias iamroot='sudo -i'
@@ -67,18 +68,18 @@ orizon() {
             ;;
         --theme)
             if [ -z "$2" ]; then
-                echo -e "${YELLOW}Использование:${NC} orizon --theme dark|light"
+                echo -e "${YELLOW}Usage:${NC} orizon --theme dark|light"
             else
                 bash /opt/orizon/scripts/apply-kde-theme.sh "$2"
             fi
             ;;
         --update|-u)
-            echo -e "${CYAN}[ORIZON]${NC} Обновление системы..."
+            echo -e "${CYAN}[ORIZON]${NC} Updating system..."
             sudo bash /opt/orizon/scripts/update.sh
             ;;
         --wallpaper|-w)
             if [ -z "$2" ]; then
-                echo -e "${YELLOW}Использование:${NC} orizon --wallpaper /путь/к/файлу.png"
+                echo -e "${YELLOW}Usage:${NC} orizon --wallpaper /path/to/file.png"
             else
                 plasma-apply-wallpaperimage "$2" 2>/dev/null || \
                 qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "
@@ -87,25 +88,25 @@ orizon() {
                     d.currentConfigGroup=['Wallpaper','org.kde.image','General'];
                     d.writeConfig('Image','file://${2}');
                 " 2>/dev/null
-                echo -e "${GREEN}✓${NC} Обои: $2"
+                echo -e "${GREEN}✓${NC} Wallpaper: $2"
             fi
             ;;
         --help|-h|"")
             echo ""
-            echo -e "${CYAN}${BOLD}ORIZON${NC} — CLI системы"
+            echo -e "${CYAN}${BOLD}ORIZON${NC} — CLI of system"
             echo ""
-            echo -e "  ${CYAN}orizon --version${NC}           версия системы"
-            echo -e "  ${CYAN}orizon --about${NC}             информация и ссылка"
-            echo -e "  ${CYAN}orizon --info${NC}              системная информация"
-            echo -e "  ${CYAN}orizon --theme dark${NC}        тёмная тема"
-            echo -e "  ${CYAN}orizon --theme light${NC}       светлая тема"
-            echo -e "  ${CYAN}orizon --update${NC}            обновить систему"
-            echo -e "  ${CYAN}orizon --wallpaper <путь>${NC}  сменить обои"
+            echo -e "  ${CYAN}orizon --version${NC}           system version"
+            echo -e "  ${CYAN}orizon --about${NC}             information and our site"
+            echo -e "  ${CYAN}orizon --info${NC}              system information"
+            echo -e "  ${CYAN}orizon --theme dark${NC}        dark theme"
+            echo -e "  ${CYAN}orizon --theme light${NC}       light theme"
+            echo -e "  ${CYAN}orizon --update${NC}            update system"
+            echo -e "  ${CYAN}orizon --wallpaper <путь>${NC}  change wallpapers"
             echo ""
             ;;
         *)
-            echo -e "\033[0;31mНеизвестная команда:\033[0m $1"
-            echo -e "Используй ${CYAN}orizon --help${NC}"
+            echo -e "\033[0;31Unknown command::\033[0m $1"
+            echo -e "Type ${CYAN}orizon --help${NC}"
             ;;
     esac
 }
