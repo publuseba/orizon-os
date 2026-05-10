@@ -111,7 +111,7 @@ orizon() {
     esac
 }
 
-# ── Neofetch при открытии терминала ─────────────────────────
+# ── Neofetch on terminal open ─────────────────────────
 if [[ $- == *i* ]] && [[ -z "$ORIZON_GREETED" ]]; then
     export ORIZON_GREETED=1
     neofetch 2>/dev/null || true
