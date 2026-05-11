@@ -101,7 +101,7 @@ orizon() {
             echo -e "  ${CYAN}orizon --theme dark${NC}        dark theme"
             echo -e "  ${CYAN}orizon --theme light${NC}       light theme"
             echo -e "  ${CYAN}orizon --update${NC}            update system"
-            echo -e "  ${CYAN}orizon --wallpaper <путь>${NC}  change wallpapers"
+            echo -e "  ${CYAN}orizon --wallpaper /path/to/file/${NC}  change wallpapers"
             echo ""
             ;;
         *)
