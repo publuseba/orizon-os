@@ -20,6 +20,6 @@ chmod +x install-kde.sh
 sudo ./install-kde.sh
 ```
 ## 📝 Some screenshots?
-![Orizon1](https://i.imgur.com/RhJuOb1.jpeg)
-![Orizon2](https://i.imgur.com/jiQdnDA.png)
-![Orizon3](https://i.imgur.com/Gkm9qi1.png)
+![Orizon1](https://i.postimg.cc/Gm7r97dY/67.png)
+![Orizon2](https://i.postimg.cc/Qd4sV4hp/gazan.png)
+![Orizon3](https://i.postimg.cc/Jz6mt6MN/sixseven.png)
