@@ -278,6 +278,10 @@ kbuildsycoca5 --noincremental 2>/dev/null || true
 
 echo -e "${GREEN}  ✓ Done${NC}"
 
+USER_HOME=$(eval echo "~$INSTALL_USER")
+BIN_DIR="$USER_HOME/.local/bin"
+sudo rm "$BIN_DIR/orizon-first-run.sh"
+
 # ── Restart Plasma ────────────────────────────────────────────
 echo -e "\n  Restarting Plasma..."
 kquitapp5 plasmashell >/dev/null 2>&1 || kquitapp6 plasmashell >/dev/null 2>&1
