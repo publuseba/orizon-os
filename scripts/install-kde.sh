@@ -732,8 +732,7 @@ rm -f ~/.cache/icon-cache.kcache
 rm -rf ~/.cache/plasma-svgelements-*
 kbuildsycoca5 --noincremental 2>/dev/null || true
 
-# Do NOT auto-delete — remove manually after verification:
-# rm -f "$AUTOSTART_DIR/orizon-first-run.desktop"
+rm -f "$AUTOSTART_DIR/orizon-first-run.desktop"
 FIRSTRUN
 
 chmod +x "$BIN_DIR/orizon-first-run.sh"
