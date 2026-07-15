@@ -23,3 +23,5 @@ sudo ./install-kde.sh
 ![Orizon1](https://i.postimg.cc/Gm7r97dY/67.png)
 ![Orizon2](https://i.postimg.cc/Qd4sV4hp/gazan.png)
 ![Orizon3](https://i.postimg.cc/Jz6mt6MN/sixseven.png)
+
+*please notice that this project may contain bugs, because it's still a beta.*
