@@ -1,9 +1,9 @@
 NAME="ORIZON Linux"
-VERSION="Beta 2/Fix 1"
+VERSION="Beta 2/Fix 2"
 ID=ubuntu
 ID_LIKE=debian
-PRETTY_NAME="ORIZON Linux Beta 2/Fix 1"
-VERSION_ID="B2f1"
+PRETTY_NAME="ORIZON Linux Beta 2/Fix 2"
+VERSION_ID="B2f2"
 HOME_URL="https://taplink.cc/orizon"
 VERSION_CODENAME=noble
 UBUNTU_CODENAME=noble
