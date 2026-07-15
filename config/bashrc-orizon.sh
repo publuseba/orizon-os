@@ -1,8 +1,4 @@
 
-# ═══════════════════════════════════════════════════════════
-#  ORIZON Linux System — Shell Configuration
-#  Beta 2/Fix 1 | taplink.cc/orizon
-# ═══════════════════════════════════════════════════════════
 
 export ORIZON_VERSION="Beta 2/Fix 1"
 export ORIZON_BUILD="15-04-2026"
