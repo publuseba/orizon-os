@@ -1,5 +1,3 @@
-
-
 export ORIZON_VERSION="Beta 2/Fix 2"
 export ORIZON_BUILD="15-07-2026"
 export ORIZON_LINK="https://taplink.cc/orizon"
@@ -112,3 +110,4 @@ if [[ $- == *i* ]] && [[ -z "$ORIZON_GREETED" ]]; then
     export ORIZON_GREETED=1
     neofetch 2>/dev/null || true
 fi
+
