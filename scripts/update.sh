@@ -4,7 +4,7 @@
 
 echo ""
 echo "  ╔══════════════════════════════════╗"
-echo "  ║     ORIZON System Updater        ║"
+echo "  ║     ORIZON APT Updater Script    ║"
 echo "  ╚══════════════════════════════════╝"
 echo ""
 echo "  [1/3] Updating package lists..."
