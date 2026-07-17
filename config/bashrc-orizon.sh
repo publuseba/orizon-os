@@ -1,3 +1,4 @@
+#!/bin/bash
 export ORIZON_VERSION="Beta 2/Fix 2"
 export ORIZON_BUILD="15-07-2026"
 export ORIZON_LINK="https://taplink.cc/orizon"
