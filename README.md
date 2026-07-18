@@ -24,4 +24,5 @@ sudo ./install-kde.sh
 ![Orizon2](https://i.postimg.cc/Qd4sV4hp/gazan.png)
 ![Orizon3](https://i.postimg.cc/Jz6mt6MN/sixseven.png)
 
-*please notice that this project may contain bugs, because it's still a beta.*
+*PUBLIC BETA. THIS PROJECT MAY BE UNSTABLE. ALL IS SUBJECT TO CHANGE.*
+*note: install-kde.sh enables autologin by default — anyone with physical access to the device can get in without a password.*
