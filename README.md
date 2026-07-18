@@ -26,3 +26,6 @@ sudo ./install-kde.sh
 
 *PUBLIC BETA. THIS PROJECT MAY BE UNSTABLE. ALL IS SUBJECT TO CHANGE.*
 *note: install-kde.sh enables autologin by default — anyone with physical access to the device can get in without a password.*
+
+
+end of readme )
